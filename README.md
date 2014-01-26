@@ -34,11 +34,11 @@ Use `kill-process` as a finalizer to clean up a leftover process.
 (get-process "pinger")
 ;; => #<process pinger>
 
-;; allow object to be garbage collected
+;; Allow object to be garbage collected.
 (setf pinger nil)
 (garbage-collect)
 
-;; Process has been automatically cleaned up by finalizer.
+;; Process has been automatically cleaned up by the finalizer.
 (get-process "pinger")
 ;; => nil
 ```
