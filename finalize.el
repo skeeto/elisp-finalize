@@ -41,16 +41,18 @@
 
 (cl-defun finalize-register (object finalizer &rest finalizer-args)
   "Run FINALIZER with FINALIZER-ARGS when OBJECT is garbage collected.
-Do *not* pass OBJECT as a finalizer argument because it will not
-get collected!"
+Returns OBJECT.
+
+You *cannot* pass OBJECT as a finalizer argument."
   (let ((ref (finalize--ref object)))
     ;; FINALIZER-ARGS could be instead captured in a closure, but
     ;; establishing a closure here would require this package to be
     ;; byte-compiled in order to operate properly. Interpreted
     ;; closures capture the entire environment.
-    (when (memq object finalizer-args)
-      (error "Cannot use OBJECT as a finalizer argument."))
-    (push (list finalizer finalizer-args ref) finalize-objects)))
+    (prog1 object
+      (when (memq object finalizer-args)
+        (error "Cannot use OBJECT as a finalizer argument."))
+      (push (list finalizer finalizer-args ref) finalize-objects))))
 
 (defun finalize--check-entry (entry)
   "Attempt to finalize ENTRY if uncollected, returning non-nil if so."
