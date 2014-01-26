@@ -13,21 +13,7 @@ This package works by taking advantage of weak references and
 
 ## Usage
 
-```el
-;; Side-effect global variable.
-(setf result nil)
-
-;; Register a fresh list and let it go.
-(finalize-register (list 1 2 3)
-                   (lambda () (setf result :done)))
-
-result  ; => nil
-(garbage-collect)
-result  ; => :done
-```
-
-Here's a more practical example, using a finalizer to clean up a
-leftover process.
+Use `kill-process` as a finalizer to clean up a leftover process.
 
 ```el
 (require 'cl-lib)
