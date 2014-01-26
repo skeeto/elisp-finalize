@@ -52,7 +52,20 @@ leftover process.
 (setf pinger nil)
 (garbage-collect)
 
-;; Process has been automaticalled cleaned up by finalizer.
+;; Process has been automatically cleaned up by finalizer.
 (get-process "pinger")
 ;; => nil
 ```
+
+## Closure Caveat
+
+Be mindful when using lexical scope and passing a lambda to
+`finalize-register`. Uncompiled lambdas capture their *entire*
+environment, which almost certainly
+[includes the object subject to finalization][closure]. This will
+backfire and keep the object alive indefinitely. This situation will
+only work correctly when your function is byte-compiled, which will
+provide precise lexical environment capture.
+
+
+[closure]: http://nullprogram.com/blog/2013/12/30/#the_readable_closures_catch
