@@ -29,7 +29,7 @@ Use `kill-process` as a finalizer to clean up a leftover process.
     object))
 
 (setf pinger (pinger-create "localhost"))
-;; => [cl-struct-pinger #<process pinger<1>> "localhost"]
+;; => [cl-struct-pinger #<process pinger> "localhost"]
 
 (get-process "pinger")
 ;; => #<process pinger>
