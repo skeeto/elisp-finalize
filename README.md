@@ -4,6 +4,10 @@ This package provides finalizers for Emacs Lisp objects. Objects
 registered with this package will have a specified finalizer function
 run *immediately* after that object is garbage collected.
 
+The API has one function: `finalize-register`. It accepts an object, a
+finalizer, and a token to be passed to the finalizer. The object being
+finalized will be unavailable to the finalizer.
+
 This package works by taking advantage of weak references and
 `post-gc-hook`.
 
@@ -26,6 +30,9 @@ Here's a more practical example, using a finalizer to clean up a
 leftover process.
 
 ```el
+(require 'cl-lib)
+(require 'finalize)
+
 (cl-defstruct (pinger (:constructor pinger--create))
   process host)
 
