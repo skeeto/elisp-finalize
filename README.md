@@ -57,6 +57,26 @@ leftover process.
 ;; => nil
 ```
 
+Or using the `finalizable` EIEIO mixin class, which calls `finalize`
+on a copy of the original object after garbage collection.
+
+```el
+(require 'eieio)
+(require 'finalizable)
+
+(defclass pinger (finalizable)
+  ((process :initarg :process :reader ping-process)
+   (host :initarg :host :reader ping-host)))
+
+(defun pinger-create (host)
+  (make-instance 'pinger
+                 :process (start-process "ping" nil "ping" host)
+                 :host host))
+
+(defmethod finalize ((pinger pinger))
+  (kill-process (ping-process pinger)))
+```
+
 ## Closure Caveat
 
 Be mindful when using lexical scope and passing a lambda to
