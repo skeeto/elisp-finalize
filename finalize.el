@@ -59,8 +59,7 @@ You *cannot* pass OBJECT as a finalizer argument."
   (cl-destructuring-bind (finalizer finalizer-args ref) entry
     (when (finalize--empty-p ref)
       (prog1 t
-        (ignore-errors
-          (apply finalizer finalizer-args))))))
+        (apply #'run-at-time 0 nil finalizer finalizer-args)))))
 
 (defun finalize-check ()
   "Run finalizers for any dead, registered objects."
