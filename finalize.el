@@ -11,13 +11,13 @@
 
 ;; Unlike finalizers in other languages, the actual object to be
 ;; finalized will *not* be available to the finalizer. To help deal
-;; with this, an optional token value can be passed to the finalizer
-;; to provide context as to what object was collected.
+;; with this, arguments can be passed to the finalizer to provide
+;; context as to which object was collected. The object itself must
+;; *not* be on of these arguments.
 
-;; -- Function: `finalize-register' object finalizer &optional token
-;;    Registers an object for finalization. FINALIZER will be called
-;;    with TOKEN when provided, or with no arguments, when OBJECT has
-;;    been garbage collected.
+;; -- Function: `finalize-register' object finalizer &rest finalizer-args
+;;      Registers an object for finalization. FINALIZER will be called
+;;      with FINALIZER-ARGS when OBJECT has been garbage collected.
 
 ;; This package works by exploiting Emacs Lisp's weak hash tables and
 ;; hooking the `post-gc-hook'.
@@ -39,28 +39,26 @@
   "Return non-nil if value behind REF is still present."
   (zerop (hash-table-count ref)))
 
-(cl-defun finalize-register (object finalizer &optional (token nil token-p))
-  "Run FINALIZER with TOKEN when OBJECT is garbage collected.
-FINALIZER will be called with no arguments if TOKEN is not
-provided. Do *not* use OBJECT for TOKEN because it will not get
-collected!"
-  (let ((ref (finalize--ref object))
-        (rich-token (and token-p (vector token))))
-    ;; Rich-token could be instead captured in a closure, but
+(cl-defun finalize-register (object finalizer &rest finalizer-args)
+  "Run FINALIZER with FINALIZER-ARGS when OBJECT is garbage collected.
+Do *not* pass OBJECT as a finalizer argument because it will not
+get collected!"
+  (let ((ref (finalize--ref object)))
+    ;; FINALIZER-ARGS could be instead captured in a closure, but
     ;; establishing a closure here would require this package to be
     ;; byte-compiled in order to operate properly. Interpreted
     ;; closures capture the entire environment.
-    (push (list finalizer rich-token ref) finalize-objects)))
+    (when (memq object finalizer-args)
+      (error "Cannot use OBJECT as a finalizer argument."))
+    (push (list finalizer finalizer-args ref) finalize-objects)))
 
 (defun finalize--check-entry (entry)
   "Attempt to finalize ENTRY if uncollected, returning non-nil if so."
-  (cl-destructuring-bind (finalizer token ref) entry
+  (cl-destructuring-bind (finalizer finalizer-args ref) entry
     (when (finalize--empty-p ref)
       (prog1 t
         (ignore-errors
-          (if token
-              (funcall finalizer (elt token 0))
-            (funcall finalizer)))))))
+          (apply finalizer finalizer-args))))))
 
 (defun finalize-check ()
   "Run finalizers for any dead, registered objects."

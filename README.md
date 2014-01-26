@@ -5,8 +5,8 @@ registered with this package will have a specified finalizer function
 run *immediately* after that object is garbage collected.
 
 The API has one function: `finalize-register`. It accepts an object, a
-finalizer, and a token to be passed to the finalizer. The object being
-finalized will be unavailable to the finalizer.
+finalizer, and arguments to be passed to the finalizer. The object
+being finalized will be unavailable to the finalizer.
 
 This package works by taking advantage of weak references and
 `post-gc-hook`.
