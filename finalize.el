@@ -33,8 +33,10 @@
 ;;         (finalize-register object #'kill-process process)
 ;;         object))
 
-;; This package works by exploiting Emacs Lisp's weak hash tables and
-;; hooking `post-gc-hook'.
+;; There is also a "finalizable" mixin class for EIEIO that provides a
+;; `finalize' generic function.
+
+;;     (require 'finalizable)
 
 ;;; Code:
 
