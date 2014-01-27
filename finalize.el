@@ -2,6 +2,9 @@
 
 ;; This is free and unencumbered software released into the public domain.
 
+;; Author: Christopher Wellons <wellons@nullprogram.com>
+;; URL: https://github.com/skeeto/elisp-finalize
+
 ;; Commentary:
 
 ;; This package will immediately run a provided callback (a finalizer)
