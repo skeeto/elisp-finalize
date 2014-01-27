@@ -5,7 +5,7 @@
 ;; Author: Christopher Wellons <wellons@nullprogram.com>
 ;; URL: https://github.com/skeeto/elisp-finalize
 
-;; Commentary:
+;;; Commentary:
 
 ;; This package will immediately run a callback (a finalizer) after
 ;; its registered lisp object has been garbage collected. This allows
