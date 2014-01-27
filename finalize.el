@@ -7,10 +7,10 @@
 
 ;; Commentary:
 
-;; This package will immediately run a provided callback (a finalizer)
-;; after its registered lisp object has been garbage collected. This
-;; allows for extra resources, such as buffers and processes, to be
-;; cleaned up after the object has been freed.
+;; This package will immediately run a callback (a finalizer) after
+;; its registered lisp object has been garbage collected. This allows
+;; for extra resources, such as buffers and processes, to be cleaned
+;; up after the object has been freed.
 
 ;; Unlike finalizers in other languages, the actual object to be
 ;; finalized will *not* be available to the finalizer. To help deal
@@ -22,8 +22,19 @@
 ;;      Registers an object for finalization. FINALIZER will be called
 ;;      with FINALIZER-ARGS when OBJECT has been garbage collected.
 
+;; Usage:
+
+;;     (cl-defstruct (pinger (:constructor pinger--create))
+;;       process host)
+;;
+;;     (defun pinger-create (host)
+;;       (let* ((process (start-process "pinger" nil "ping" host))
+;;              (object (pinger--create :process process :host host)))
+;;         (finalize-register object #'kill-process process)
+;;         object))
+
 ;; This package works by exploiting Emacs Lisp's weak hash tables and
-;; hooking the `post-gc-hook'.
+;; hooking `post-gc-hook'.
 
 ;;; Code:
 
