@@ -13,7 +13,7 @@ This package works by taking advantage of weak references and
 
 ## Usage
 
-Use `kill-process` as a finalizer to clean up a leftover process.
+Use `delete-process` as a finalizer to clean up a leftover process.
 
 ```el
 (require 'cl-lib)
@@ -25,7 +25,7 @@ Use `kill-process` as a finalizer to clean up a leftover process.
 (defun pinger-create (host)
   (let* ((process (start-process "pinger" nil "ping" host))
          (object (pinger--create :process process :host host)))
-    (finalize-register object #'kill-process process)
+    (finalize-register object #'delete-process process)
     object))
 
 (setf pinger (pinger-create "localhost"))
@@ -51,8 +51,8 @@ on a copy of the original object after garbage collection.
 (require 'finalizable)
 
 (defclass pinger (finalizable)
-  ((process :initarg :process :reader ping-process)
-   (host :initarg :host :reader ping-host)))
+  ((process :initarg :process :reader pinger-process)
+   (host :initarg :host :reader pinger-host)))
 
 (defun pinger-create (host)
   (make-instance 'pinger
@@ -60,7 +60,7 @@ on a copy of the original object after garbage collection.
                  :host host))
 
 (defmethod finalize ((pinger pinger))
-  (kill-process (ping-process pinger)))
+  (delete-process (pinger-process pinger)))
 ```
 
 ## Closure Caveat
