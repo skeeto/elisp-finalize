@@ -11,6 +11,8 @@ being finalized will be unavailable to the finalizer.
 This package works by taking advantage of weak references and
 `post-gc-hook`.
 
+See also: [Emacs Lisp Object Finalizers][blog]
+
 ## Usage
 
 Use `delete-process` as a finalizer to clean up a leftover process.
@@ -75,3 +77,4 @@ provide precise lexical environment capture.
 
 
 [closure]: http://nullprogram.com/blog/2013/12/30/#the_readable_closures_catch
+[blog]: http://nullprogram.com/blog/2014/01/27/
