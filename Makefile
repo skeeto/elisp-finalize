@@ -1,28 +1,21 @@
-EMACS   ?= emacs
-CASK    ?= cask
-VIRTUAL := $(CASK) exec $(EMACS)
-BATCH   := $(VIRTUAL) -batch -Q -L .
-
-PACKAGE := finalize
-VERSION := $(shell git describe)
+.POSIX:
+.SUFFIXES: .el .elc
+EMACS   = emacs
+VERSION = 2.0.0
 
 EL = finalize.el finalizable.el
 ELC = $(EL:.el=.elc)
 EXTRA_DIST = README.md UNLICENSE
 
-.PHONY : all compile package test clean
-
-all : compile package
-
 compile: $(ELC)
 
-package : $(PACKAGE)-$(VERSION).tar
+package: finalize-$(VERSION).tar
 
-$(PACKAGE)-$(VERSION).tar : $(EL) $(PACKAGE)-pkg.el $(EXTRA_DIST)
-	tar -cf $@ --transform "s,^,$(PACKAGE)-$(VERSION)/," $^
+finalize-$(VERSION).tar: $(EL) finalize-pkg.el $(EXTRA_DIST)
+	tar -cf $@ --transform "s,^,finalize-$(VERSION)/," $^
 
 clean:
-	$(RM) *.tar *.elc
+	rm -f finalize-$(VERSION).tar $(ELC)
 
-%.elc: %.el
-	$(BATCH) -f batch-byte-compile $<
+.el.elc:
+	$(EMACS) -batch -Q -L . -f batch-byte-compile $<
