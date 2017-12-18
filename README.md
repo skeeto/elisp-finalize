@@ -1,5 +1,9 @@
 # Finalizers for Emacs Lisp
 
+**NOTE**: Emacs 25 [directly supports finalizers][e25] via
+`make-finalizer`. Only use this package if you *must* support Emacs 24
+or earlier.
+
 This package provides finalizers for Emacs Lisp objects. Objects
 registered with this package will have a specified finalizer function
 run *immediately* after that object is garbage collected.
@@ -78,3 +82,4 @@ provide precise lexical environment capture.
 
 [closure]: http://nullprogram.com/blog/2013/12/30/#the_readable_closures_catch
 [blog]: http://nullprogram.com/blog/2014/01/27/
+[e25]: https://www.gnu.org/software/emacs/manual/html_node/elisp/Finalizer-Type.html
